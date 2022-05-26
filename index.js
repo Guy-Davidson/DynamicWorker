@@ -5,9 +5,9 @@ const express = require('express');
 // const initAutoScaler = require('./autoScaler')
 
 const app = express();
-app.use(express.urlencoded({extended: true}))
-app.use(express.json())
-app.use(fileUpload())
+// app.use(express.urlencoded({extended: true}))
+// app.use(express.json())
+// app.use(fileUpload())
 
 // const inQueue = []
 // initAutoScaler(inQueue)
