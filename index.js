@@ -24,7 +24,7 @@ app.get('/test', (req, res) => {
 const takeJob = async () => {    
     let hasWork = true
     while(hasWork) {
-        hasWork = false
+        // hasWork = false
         for(const ip of loadIps()) {
             console.log(ip);
             await axios
