@@ -21,19 +21,19 @@ app.get('/test', (req, res) => {
     res.send(`test ok`)
 })
 
-// app.get('/ips', (req, res) => {    
+app.get('/ips', (req, res) => {    
 
-//     const loadIps = async () => {        
-//         fs.readFile('../ips.txt', 'utf8' , (err, data) => {
-//             if (err) res.send(err)
-//             else {
-//                 res.send(data)
-//             }             
-//           })
-//     }
+    const loadIps = async () => {        
+        fs.readFile('../ips.txt', 'utf8' , (err, data) => {
+            if (err) res.send(err)
+            else {
+                res.send(data)
+            }             
+          })
+    }
 
-//     loadIps()    
-// })
+    loadIps()    
+})
 
 
 
