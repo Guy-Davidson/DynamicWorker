@@ -31,6 +31,7 @@ const takeJob = async () => {
                 .get(`${ip}/test`)
                 .then(res => console.log(res.data))
         }         
+        await sleep(5 * 1000)
     }
 }
 
