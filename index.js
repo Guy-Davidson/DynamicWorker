@@ -28,7 +28,7 @@ const takeJob = async () => {
         for(const ip of loadIps()) {
             console.log(ip);
             await axios
-                .get(`${ip}/test`)
+                .get(`${ip}:5000/test`)
                 .then(res => console.log(res.data))
         }         
         await sleep(5 * 1000)
