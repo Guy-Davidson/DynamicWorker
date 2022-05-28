@@ -1,8 +1,8 @@
 const fs = require('fs')
 const express = require('express');
+const axios = require('axios')
 // const fileUpload = require('express-fileupload')
 // const { v4: uuidv4 } = require('uuid');
-// const initAutoScaler = require('./autoScaler')
 
 const app = express();
 // app.use(express.urlencoded({extended: true}))
@@ -21,21 +21,34 @@ app.get('/test', (req, res) => {
     res.send(`test ok`)
 })
 
-app.get('/ips', (req, res) => {    
-
-    const loadIps = async () => {        
-        fs.readFile('../ips.txt', 'utf8' , (err, data) => {
-            if (err) res.send(err)
-            else {
-                res.send(data)
-            }             
-          })
+const takeJob = async () => {    
+    let hasWork = true
+    while(hasWork) {
+        hasWork = false
+        for(const ip of loadIps()) {
+            console.log(ip);
+            await axios
+                .get(`${ip}/test`)
+                .then(res => console.log(res.data))
+        }         
     }
+}
 
-    loadIps()    
-})
+const loadIps = () => {        
+    fs.readFileSync('../ips.txt', 'utf8' , (err, data) => {
+        if (err) res.send(err)
+        else {
+            return data.split(',').map(ip => ip.split(':')[1])
+        }             
+      })
+}
+
+const sleep = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 
+takeJob()
 
 const PORT = process.env.PORT || 5000
 
