@@ -5,8 +5,7 @@ AWS.config.region = 'eu-west-1'
 const ec2 = new AWS.EC2({apiVersion: '2016-11-15'});
 
 const shutDown = () => {
-    let workerId = fs.readFileSync('../workerId.txt', 'utf8')    
-    workerId = workerId.slice(0, myIp.length - 1) 
+    let workerId = fs.readFileSync('../workerId.txt', 'utf8')        
     
     ec2.stopInstances({InstanceIds: [workerId]}, (err, data) => {
         if (err) console.log("Error", err) 
