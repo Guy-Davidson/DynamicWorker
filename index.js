@@ -9,7 +9,7 @@ const MAX_ATTEMPTS = 3
 const SLEEP_DUR = 3
 
 const takeJob = async () => {        
-    let ipsArr = fs.readFileSync('../ips.txt', 'utf8').replace('\n','').split(',').map(ip => ip.split(':')[1])
+    let ipsArr = fs.readFileSync('../ips.txt', 'utf8').replace('\n','').trim().split(',').map(ip => ip.split(':')[1])
     attempts = 0
     while(true) {
         
