@@ -6,7 +6,7 @@ const shutDown = require('./shutDown')
 // max num a work will fail to get a job before shutting down. 
 const MAX_ATTEMPTS = 5
 //number of seconds in between each worker check.
-const SLEEP_DUR = 10
+const SLEEP_DUR = 1
 
 const takeJob = async () => {        
     let ipsArr = fs.readFileSync('../ips.txt', 'utf8').split(',').map(ip => ip.split(':')[1])
@@ -25,7 +25,7 @@ const takeJob = async () => {
 
                         let output = sha512(res.data.binaryDataBuffer.data)                        
                         for(let i = 0; i < parseInt(res.data.iterations); i++) output = sha512(output)                                                
-                        await sendJob({ id: res.data.id, output: output}, ip)
+                        await sendJob({ id: res.data.id, output: output}, ip, attempts)
                     } else {
                         console.log("ok got empty");
                     }
@@ -36,6 +36,7 @@ const takeJob = async () => {
         if(!hasWork) attempts += 1
         if(attempts >= MAX_ATTEMPTS) {
             console.log("should shut down");
+            attempts = 100
             shutDown()
             break
         }
@@ -44,11 +45,11 @@ const takeJob = async () => {
     }
 }
 
-const sendJob = async (output, ip) => {
+const sendJob = async (output, ip, attempts) => {
     let confirmed = false
     while(!confirmed) {
         await axios
-            .put(`http://${ip}:5000/enqueueCompleted`, output)
+            .put(`http://${ip}:5000/enqueueCompleted?attempts=${attempts}`, output)
             .then(res => {
                 if(res.data === "ok") confirmed = true
                 console.log("successfully sent job!");
