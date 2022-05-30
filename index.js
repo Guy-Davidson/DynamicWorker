@@ -4,12 +4,12 @@ const sha512 = require('js-sha512')
 const shutDown = require('./shutDown')
 
 // max num a work will fail to get a job before shutting down. 
-const MAX_ATTEMPTS = 5
+const MAX_ATTEMPTS = 3
 //number of seconds in between each worker check.
-const SLEEP_DUR = 1
+const SLEEP_DUR = 3
 
 const takeJob = async () => {        
-    let ipsArr = fs.readFileSync('../ips.txt', 'utf8').split(',').map(ip => ip.split(':')[1])
+    let ipsArr = fs.readFileSync('../ips.txt', 'utf8').replace('\n','').split(',').map(ip => ip.split(':')[1])
     attempts = 0
     while(true) {
         
@@ -25,9 +25,9 @@ const takeJob = async () => {
 
                         let output = sha512(res.data.binaryDataBuffer.data)                        
                         for(let i = 0; i < parseInt(res.data.iterations); i++) output = sha512(output)                                                
-                        await sendJob({ id: res.data.id, output: output}, ip, attempts)
+                        await sendJob({ id: res.data.id, output: output}, ip)
                     } else {
-                        console.log("ok got empty");
+                        console.log("empty");
                     }
                 })
                 .catch(e => console.log("error"))
@@ -35,8 +35,7 @@ const takeJob = async () => {
         
         if(!hasWork) attempts += 1
         if(attempts >= MAX_ATTEMPTS) {
-            console.log("should shut down");
-            attempts = 100
+            console.log("should shut down");            
             shutDown()
             break
         }
@@ -45,11 +44,11 @@ const takeJob = async () => {
     }
 }
 
-const sendJob = async (output, ip, attempts) => {
+const sendJob = async (output, ip) => {
     let confirmed = false
     while(!confirmed) {
         await axios
-            .put(`http://${ip}:5000/enqueueCompleted?attempts=${attempts}`, output)
+            .put(`http://${ip}:5000/enqueueCompleted`, output)
             .then(res => {
                 if(res.data === "ok") confirmed = true
                 console.log("successfully sent job!");
