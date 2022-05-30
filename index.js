@@ -14,11 +14,11 @@ const takeJob = async () => {
     while(true) {
         
         let hasWork = false
-        for(const ip of ipsArr) {            
+        for(const ip of ipsArr) { 
+            console.log(ip);           
             await axios
                 .get(`http://${ip}:5000/dequeue`) 
-                .then(async (res) => {
-                    
+                .then(async (res) => {                    
                     if(res.data !== "empty") {                        
                         hasWork = true
                         attempts = 0
@@ -26,6 +26,8 @@ const takeJob = async () => {
                         let output = sha512(res.data.binaryDataBuffer.data)                        
                         for(let i = 0; i < parseInt(res.data.iterations); i++) output = sha512(output)                                                
                         await sendJob({ id: res.data.id, output: output}, ip)
+                    } else {
+                        console.log("ok got empty");
                     }
                 })
                 .catch(e => console.log("error"))

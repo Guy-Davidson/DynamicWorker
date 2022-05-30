@@ -6,6 +6,7 @@ const ec2 = new AWS.EC2({apiVersion: '2016-11-15'});
 
 const shutDown = () => {
     let workerId = fs.readFileSync('../workerId.txt', 'utf8')        
+    // let workerId = "i-04036d21180f12974"   
     
     ec2.stopInstances({InstanceIds: [workerId]}, (err, data) => {
         if (err) console.log("Error", err) 
