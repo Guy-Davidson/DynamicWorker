@@ -14,7 +14,7 @@ const takeJob = async () => {
     while(true) {
         
         let hasWork = false
-        for(const ip of ipsArr.slice(0,1)) {            
+        for(const ip of ipsArr) {            
             await axios
                 .get(`http://${ip}:5000/dequeue`) 
                 .then(async (res) => {
