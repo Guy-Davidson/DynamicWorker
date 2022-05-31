@@ -3,19 +3,24 @@ const axios = require('axios')
 const sha512 = require('js-sha512')
 const shutDown = require('./shutDown')
 
-// max num a work will fail to get a job before shutting down. 
+// max number a workwe will fail to get a job before shutting down. 
 const MAX_ATTEMPTS = 3
 //number of seconds in between each worker check.
 const SLEEP_DUR = 3
 
 const takeJob = async () => {        
-    let ipsArr = fs.readFileSync('../ips.txt', 'utf8').replace('\n','').trim().split(',').map(ip => ip.split(':')[1])
-    attempts = 0
+    let attempts = 0
+    let ipsArr = fs.readFileSync('../ips.txt', 'utf8')   
+            .replace('\n','')
+            .trim()
+            .split(',')
+            .map(ip => ip.split(':')[1])
+    
     while(true) {
-        
         let hasWork = false
+        
         for(const ip of ipsArr) { 
-            console.log(ip);           
+                     
             await axios
                 .get(`http://${ip}:5000/dequeue`) 
                 .then(async (res) => {                    
@@ -26,16 +31,13 @@ const takeJob = async () => {
                         let output = sha512(res.data.binaryDataBuffer.data)                        
                         for(let i = 0; i < parseInt(res.data.iterations); i++) output = sha512(output)                                                
                         await sendJob({ id: res.data.id, output: output}, ip)
-                    } else {
-                        console.log("empty");
                     }
                 })
                 .catch(e => console.log("error"))
         } 
         
         if(!hasWork) attempts += 1
-        if(attempts >= MAX_ATTEMPTS) {
-            console.log("should shut down");            
+        if(attempts >= MAX_ATTEMPTS) {                    
             shutDown()
             break
         }
