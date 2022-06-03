@@ -33,7 +33,7 @@ const takeJob = async () => {
                         await sendJob({ id: res.data.id, output: output}, ip)
                     }
                 })
-                .catch(e => console.log("error"))
+                .catch(err => console.log(err))  
         } 
         
         if(!hasWork) attempts += 1

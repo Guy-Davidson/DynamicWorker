@@ -25,7 +25,7 @@ const shutDown = async () => {
                 else if (data) console.log("Success", data.StoppingInstances);        
             }) 
         })
-        .catch(e => console.log("error"))       
+        .catch(err => console.log(err))       
 }
 
 module.exports = shutDown
