@@ -3,7 +3,7 @@ const axios = require('axios')
 const sha512 = require('js-sha512')
 const shutDown = require('./shutDown')
 
-// max number a workwe will fail to get a job before shutting down. 
+// max number a worker will fail to get a job before shutting down. 
 const MAX_ATTEMPTS = 3
 //number of seconds in between each worker check.
 const SLEEP_DUR = 3
@@ -29,7 +29,7 @@ const takeJob = async () => {
                         attempts = 0
 
                         let output = sha512(res.data.binaryDataBuffer.data)                        
-                        for(let i = 0; i < parseInt(res.data.iterations); i++) output = sha512(output)                                                
+                        for(let i = 0; i < parseInt(res.data.iterations) - 1; i++) output = sha512(output)                                                
                         await sendJob({ id: res.data.id, output: output}, ip)
                     }
                 })
